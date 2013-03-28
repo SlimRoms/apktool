@@ -212,6 +212,9 @@ public class ResConfigFlags {
 		case UI_MODE_TYPE_TELEVISION:
 			ret.append("-television");
 			break;
+		case UI_MODE_TYPE_INVERTED:
+			ret.append("-inverted");
+			break;
 		case UI_MODE_TYPE_SMALLUI:
 			ret.append("-smallui");
 			break;
@@ -462,6 +465,7 @@ public class ResConfigFlags {
 	public final static byte UI_MODE_TYPE_CAR = 0x03;
 	public final static byte UI_MODE_TYPE_TELEVISION = 0x04;
 	public final static byte UI_MODE_TYPE_APPLIANCE = 0x05;
+	public final static byte UI_MODE_TYPE_INVERTED = 0x45;
 	public final static byte UI_MODE_TYPE_SMALLUI = 0x0c;
 	public final static byte UI_MODE_TYPE_MEDIUMUI = 0x0d;
 	public final static byte UI_MODE_TYPE_LARGEUI = 0x0e;
