@@ -281,6 +281,12 @@ public class ARSCDecoder {
 			layoutDirection = mIn.readShort();
 		}
 
+		byte uiInvertedMode = 0;
+		if (size >= 38) {
+			uiInvertedMode = mIn.readByte();
+			mIn.skipBytes(1);
+		}
+
 		int exceedingSize = size - KNOWN_CONFIG_BYTES;
 		if (exceedingSize > 0) {
 			byte[] buf = new byte[exceedingSize];
@@ -302,7 +308,7 @@ public class ARSCDecoder {
 		return new ResConfigFlags(mcc, mnc, language, country, layoutDirection,
 				orientation, touchscreen, density, keyboard, navigation,
 				inputFlags, screenWidth, screenHeight, sdkVersion,
-				screenLayout, uiMode, smallestScreenWidthDp, screenWidthDp,
+				screenLayout, uiInvertedMode, uiMode, smallestScreenWidthDp, screenWidthDp,
 				screenHeightDp, isInvalid);
 	}
 

@@ -44,6 +44,7 @@ public class ResConfigFlags {
 	public final short sdkVersion;
 
 	public final byte screenLayout;
+	public final byte uiInvertedMode;
 	public final byte uiMode;
 	public final short smallestScreenWidthDp;
 
@@ -70,6 +71,7 @@ public class ResConfigFlags {
 		screenHeight = 0;
 		sdkVersion = 0;
 		screenLayout = SCREENLONG_ANY | SCREENSIZE_ANY;
+		uiInvertedMode = UI_INVERTED_MODE_ANY;
 		uiMode = UI_MODE_TYPE_ANY | UI_MODE_NIGHT_ANY;
 		smallestScreenWidthDp = 0;
 		screenWidthDp = 0;
@@ -82,7 +84,7 @@ public class ResConfigFlags {
 			char[] country, short layoutDirection, byte orientation,
 			byte touchscreen, short density, byte keyboard, byte navigation,
 			byte inputFlags, short screenWidth, short screenHeight,
-			short sdkVersion, byte screenLayout, byte uiMode,
+			short sdkVersion, byte screenLayout, byte uiInvertedMode, byte uiMode,
 			short smallestScreenWidthDp, short screenWidthDp,
 			short screenHeightDp, boolean isInvalid) {
 		if (orientation < 0 || orientation > 3) {
@@ -110,6 +112,11 @@ public class ResConfigFlags {
 			navigation = 0;
 			isInvalid = true;
 		}
+		if (uiInvertedMode < UI_INVERTED_MODE_ANY || uiInvertedMode > UI_INVERTED_MODE_NO) {
+			LOGGER.warning("Invalid inverted mode value: " + uiInvertedMode);
+			uiInvertedMode = UI_INVERTED_MODE_ANY;
+			isInvalid = true;
+		}
 
 		this.mcc = mcc;
 		this.mnc = mnc;
@@ -126,6 +133,7 @@ public class ResConfigFlags {
 		this.screenHeight = screenHeight;
 		this.sdkVersion = sdkVersion;
 		this.screenLayout = screenLayout;
+		this.uiInvertedMode = uiInvertedMode;
 		this.uiMode = uiMode;
 		this.smallestScreenWidthDp = smallestScreenWidthDp;
 		this.screenWidthDp = screenWidthDp;
@@ -202,6 +210,14 @@ public class ResConfigFlags {
 			ret.append("-square");
 			break;
 		}
+		switch (uiInvertedMode) {
+		case UI_INVERTED_MODE_YES:
+			ret.append("-inverted");
+			break;
+		case UI_INVERTED_MODE_NO:
+			ret.append("-notinverted");
+			break;
+		}
 		switch (uiMode & MASK_UI_MODE_TYPE) {
 		case UI_MODE_TYPE_CAR:
 			ret.append("-car");
@@ -211,9 +227,6 @@ public class ResConfigFlags {
 			break;
 		case UI_MODE_TYPE_TELEVISION:
 			ret.append("-television");
-			break;
-		case UI_MODE_TYPE_INVERTED:
-			ret.append("-inverted");
 			break;
 		case UI_MODE_TYPE_SMALLUI:
 			ret.append("-smallui");
@@ -343,7 +356,8 @@ public class ResConfigFlags {
 				|| screenHeightDp != 0) {
 			return SDK_HONEYCOMB_MR2;
 		}
-		if ((uiMode & (MASK_UI_MODE_TYPE | MASK_UI_MODE_NIGHT)) != 0) {
+		if ((uiMode & (MASK_UI_MODE_TYPE | MASK_UI_MODE_NIGHT)) != 0
+				|| uiInvertedMode != 0) {
 			return SDK_FROYO;
 		}
 		if ((screenLayout & (MASK_SCREENSIZE | MASK_SCREENLONG)) != 0
@@ -458,6 +472,11 @@ public class ResConfigFlags {
 	public final static byte SCREENLONG_NO = 0x10;
 	public final static byte SCREENLONG_YES = 0x20;
 
+	public final static byte UI_INVERTED_MODE_ANY = 0;
+	public final static byte UI_INVERTED_MODE_NORMAL = 1;
+	public final static byte UI_INVERTED_MODE_YES = 2;
+	public final static byte UI_INVERTED_MODE_NO = 3;
+
 	public final static byte MASK_UI_MODE_TYPE = 0x0f;
 	public final static byte UI_MODE_TYPE_ANY = 0x00;
 	public final static byte UI_MODE_TYPE_NORMAL = 0x01;
@@ -465,7 +484,6 @@ public class ResConfigFlags {
 	public final static byte UI_MODE_TYPE_CAR = 0x03;
 	public final static byte UI_MODE_TYPE_TELEVISION = 0x04;
 	public final static byte UI_MODE_TYPE_APPLIANCE = 0x05;
-	public final static byte UI_MODE_TYPE_INVERTED = 0x45;
 	public final static byte UI_MODE_TYPE_SMALLUI = 0x0c;
 	public final static byte UI_MODE_TYPE_MEDIUMUI = 0x0d;
 	public final static byte UI_MODE_TYPE_LARGEUI = 0x0e;
