@@ -245,7 +245,8 @@ public class ARSCDecoder {
 
 		byte orientation = mIn.readByte();
 		byte touchscreen = mIn.readByte();
-		short density = mIn.readShort();
+
+		int density = mIn.readUnsignedShort();
 
 		byte keyboard = mIn.readByte();
 		byte navigation = mIn.readByte();
@@ -275,16 +276,15 @@ public class ARSCDecoder {
 			screenHeightDp = mIn.readShort();
 		}
 
-		short layoutDirection = 0;
-		if (size >= 38 && sdkVersion >= 17
-				&& !this.mPkg.getName().equalsIgnoreCase("com.htc")) {
-			layoutDirection = mIn.readShort();
+		byte uiThemeMode = 0;
+		if (size >= 40) {
+			uiThemeMode = mIn.readByte();
+			mIn.skipBytes(1);
 		}
 
-		byte uiInvertedMode = 0;
+		short layoutDirection = 0;
 		if (size >= 38) {
-			uiInvertedMode = mIn.readByte();
-			mIn.skipBytes(1);
+			layoutDirection = mIn.readShort();
 		}
 
 		int exceedingSize = size - KNOWN_CONFIG_BYTES;
@@ -308,7 +308,7 @@ public class ARSCDecoder {
 		return new ResConfigFlags(mcc, mnc, language, country, layoutDirection,
 				orientation, touchscreen, density, keyboard, navigation,
 				inputFlags, screenWidth, screenHeight, sdkVersion,
-				screenLayout, uiInvertedMode, uiMode, smallestScreenWidthDp, screenWidthDp,
+				screenLayout, uiThemeMode, uiMode, smallestScreenWidthDp, screenWidthDp,
 				screenHeightDp, isInvalid);
 	}
 
@@ -411,7 +411,7 @@ public class ARSCDecoder {
 
 	private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class
 			.getName());
-	private static final int KNOWN_CONFIG_BYTES = 38;
+	private static final int KNOWN_CONFIG_BYTES = 40;
 
 	public static class ARSCData {
 

@@ -32,7 +32,7 @@ public class ResConfigFlags {
 
 	public final byte orientation;
 	public final byte touchscreen;
-	public final short density;
+	public final int density;
 
 	public final byte keyboard;
 	public final byte navigation;
@@ -44,7 +44,7 @@ public class ResConfigFlags {
 	public final short sdkVersion;
 
 	public final byte screenLayout;
-	public final byte uiInvertedMode;
+	public final byte uiThemeMode;
 	public final byte uiMode;
 	public final short smallestScreenWidthDp;
 
@@ -71,7 +71,7 @@ public class ResConfigFlags {
 		screenHeight = 0;
 		sdkVersion = 0;
 		screenLayout = SCREENLONG_ANY | SCREENSIZE_ANY;
-		uiInvertedMode = UI_INVERTED_MODE_ANY;
+		uiThemeMode = UI_THEME_MODE_UNDEFINED;
 		uiMode = UI_MODE_TYPE_ANY | UI_MODE_NIGHT_ANY;
 		smallestScreenWidthDp = 0;
 		screenWidthDp = 0;
@@ -82,9 +82,9 @@ public class ResConfigFlags {
 
 	public ResConfigFlags(short mcc, short mnc, char[] language,
 			char[] country, short layoutDirection, byte orientation,
-			byte touchscreen, short density, byte keyboard, byte navigation,
+			byte touchscreen, int density, byte keyboard, byte navigation,
 			byte inputFlags, short screenWidth, short screenHeight,
-			short sdkVersion, byte screenLayout, byte uiInvertedMode, byte uiMode,
+			short sdkVersion, byte screenLayout, byte uiThemeMode, byte uiMode,
 			short smallestScreenWidthDp, short screenWidthDp,
 			short screenHeightDp, boolean isInvalid) {
 		if (orientation < 0 || orientation > 3) {
@@ -112,9 +112,9 @@ public class ResConfigFlags {
 			navigation = 0;
 			isInvalid = true;
 		}
-		if (uiInvertedMode < UI_INVERTED_MODE_ANY || uiInvertedMode > UI_INVERTED_MODE_NO) {
-			LOGGER.warning("Invalid inverted mode value: " + uiInvertedMode);
-			uiInvertedMode = UI_INVERTED_MODE_ANY;
+		if (uiThemeMode < UI_THEME_MODE_UNDEFINED || uiThemeMode > UI_THEME_MODE_HOLO_LIGHT) {
+			LOGGER.warning("Invalid theme mode value: " + uiThemeMode);
+			uiThemeMode = UI_THEME_MODE_UNDEFINED;
 			isInvalid = true;
 		}
 
@@ -133,7 +133,7 @@ public class ResConfigFlags {
 		this.screenHeight = screenHeight;
 		this.sdkVersion = sdkVersion;
 		this.screenLayout = screenLayout;
-		this.uiInvertedMode = uiInvertedMode;
+		this.uiThemeMode = uiThemeMode;
 		this.uiMode = uiMode;
 		this.smallestScreenWidthDp = smallestScreenWidthDp;
 		this.screenWidthDp = screenWidthDp;
@@ -150,8 +150,10 @@ public class ResConfigFlags {
 		StringBuilder ret = new StringBuilder();
 		if (mcc != 0) {
 			ret.append("-mcc").append(String.format("%03d", mcc));
-			if (mnc != 0) {
-				ret.append("-mnc").append(mnc);
+			if (mcc != MNC_ZERO) {
+				if (mnc != 0 && mnc != -1) {
+					ret.append("-mnc").append(mnc);
+				}
 			}
 		}
 		if (language[0] != '\00') {
@@ -210,12 +212,12 @@ public class ResConfigFlags {
 			ret.append("-square");
 			break;
 		}
-		switch (uiInvertedMode) {
-		case UI_INVERTED_MODE_YES:
-			ret.append("-inverted");
+		switch (uiThemeMode) {
+		case UI_THEME_MODE_HOLO_DARK:
+			ret.append("-holodark");
 			break;
-		case UI_INVERTED_MODE_NO:
-			ret.append("-notinverted");
+		case UI_THEME_MODE_HOLO_LIGHT:
+			ret.append("-hololight");
 			break;
 		}
 		switch (uiMode & MASK_UI_MODE_TYPE) {
@@ -242,9 +244,6 @@ public class ResConfigFlags {
 			break;
 		case UI_MODE_TYPE_APPLIANCE:
 			ret.append("-appliance");
-			break;
-		case UI_MODE_TYPE_INVERTED:
-			ret.append("-inverted");
 			break;
 		}
 		switch (uiMode & MASK_UI_MODE_NIGHT) {
@@ -360,7 +359,7 @@ public class ResConfigFlags {
 			return SDK_HONEYCOMB_MR2;
 		}
 		if ((uiMode & (MASK_UI_MODE_TYPE | MASK_UI_MODE_NIGHT)) != 0
-				|| uiInvertedMode != 0) {
+				|| uiThemeMode != 0) {
 			return SDK_FROYO;
 		}
 		if ((screenLayout & (MASK_SCREENSIZE | MASK_SCREENLONG)) != 0
@@ -415,6 +414,8 @@ public class ResConfigFlags {
 	public final static byte SDK_ICE_CREAM_SANDWICH_MR1 = 15;
 	public final static byte SDK_JELLY_BEAN = 16;
 	public final static byte SDK_JELLY_BEAN_MR1 = 17;
+	public final static byte SDK_JELLY_BEAN_MR2 = 18;
+	public final static byte KITKAT = 19;
 
 	public final static byte ORIENTATION_ANY = 0;
 	public final static byte ORIENTATION_PORT = 1;
@@ -426,14 +427,16 @@ public class ResConfigFlags {
 	public final static byte TOUCHSCREEN_STYLUS = 2;
 	public final static byte TOUCHSCREEN_FINGER = 3;
 
-	public final static short DENSITY_DEFAULT = 0;
-	public final static short DENSITY_LOW = 120;
-	public final static short DENSITY_MEDIUM = 160;
-	public final static short DENSITY_TV = 213;
-	public final static short DENSITY_HIGH = 240;
-	public final static short DENSITY_XHIGH = 320;
-	public final static short DENSITY_XXHIGH = 480;
-	public final static short DENSITY_NONE = -1;
+	public final static int DENSITY_DEFAULT = 0;
+	public final static int DENSITY_LOW = 120;
+	public final static int DENSITY_MEDIUM = 160;
+	public final static int DENSITY_TV = 213;
+	public final static int DENSITY_HIGH = 240;
+	public final static int DENSITY_XHIGH = 320;
+	public final static int DENSITY_XXHIGH = 480;
+	public final static int DENSITY_NONE = 0xFFFF;
+
+	public final static int MNC_ZERO = 0xFFFF;
 
 	public final static short MASK_LAYOUTDIR = 0xc0;
 	public final static short SCREENLAYOUT_LAYOUTDIR_ANY = 0x00;
@@ -475,10 +478,10 @@ public class ResConfigFlags {
 	public final static byte SCREENLONG_NO = 0x10;
 	public final static byte SCREENLONG_YES = 0x20;
 
-	public final static byte UI_INVERTED_MODE_ANY = 0;
-	public final static byte UI_INVERTED_MODE_NORMAL = 1;
-	public final static byte UI_INVERTED_MODE_YES = 2;
-	public final static byte UI_INVERTED_MODE_NO = 3;
+	public final static byte UI_THEME_MODE_UNDEFINED = 0;
+	public final static byte UI_THEME_MODE_NORMAL = 1;
+	public final static byte UI_THEME_MODE_HOLO_DARK = 2;
+	public final static byte UI_THEME_MODE_HOLO_LIGHT = 3;
 
 	public final static byte MASK_UI_MODE_TYPE = 0x0f;
 	public final static byte UI_MODE_TYPE_ANY = 0x00;
@@ -487,7 +490,6 @@ public class ResConfigFlags {
 	public final static byte UI_MODE_TYPE_CAR = 0x03;
 	public final static byte UI_MODE_TYPE_TELEVISION = 0x04;
 	public final static byte UI_MODE_TYPE_APPLIANCE = 0x05;
-	public final static byte UI_MODE_TYPE_INVERTED = 0x45;
 	public final static byte UI_MODE_TYPE_SMALLUI = 0x0c;
 	public final static byte UI_MODE_TYPE_MEDIUMUI = 0x0d;
 	public final static byte UI_MODE_TYPE_LARGEUI = 0x0e;
