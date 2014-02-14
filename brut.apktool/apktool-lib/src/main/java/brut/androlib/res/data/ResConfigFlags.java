@@ -44,6 +44,7 @@ public class ResConfigFlags {
     public final short sdkVersion;
 
     public final byte screenLayout;
+    public final byte uiThemeMode;
     public final byte uiMode;
     public final short smallestScreenWidthDp;
 
@@ -70,6 +71,7 @@ public class ResConfigFlags {
         screenHeight = 0;
         sdkVersion = 0;
         screenLayout = SCREENLONG_ANY | SCREENSIZE_ANY;
+        uiThemeMode = UI_THEME_MODE_UNDEFINED;
         uiMode = UI_MODE_TYPE_ANY | UI_MODE_NIGHT_ANY;
         smallestScreenWidthDp = 0;
         screenWidthDp = 0;
@@ -82,7 +84,7 @@ public class ResConfigFlags {
                           char[] country, short layoutDirection, byte orientation,
                           byte touchscreen, int density, byte keyboard, byte navigation,
                           byte inputFlags, short screenWidth, short screenHeight,
-                          short sdkVersion, byte screenLayout, byte uiMode,
+                          short sdkVersion, byte screenLayout, byte uiThemeMode, byte uiMode,
                           short smallestScreenWidthDp, short screenWidthDp,
                           short screenHeightDp, boolean isInvalid) {
         if (orientation < 0 || orientation > 3) {
@@ -110,6 +112,11 @@ public class ResConfigFlags {
             navigation = 0;
             isInvalid = true;
         }
+        if (uiThemeMode < UI_THEME_MODE_UNDEFINED || uiThemeMode > UI_THEME_MODE_HOLO_LIGHT) {
+            LOGGER.warning("Invalid theme mode value: " + uiThemeMode);
+            uiThemeMode = UI_THEME_MODE_UNDEFINED;
+            isInvalid = true;
+        }
 
         this.mcc = mcc;
         this.mnc = mnc;
@@ -126,6 +133,7 @@ public class ResConfigFlags {
         this.screenHeight = screenHeight;
         this.sdkVersion = sdkVersion;
         this.screenLayout = screenLayout;
+        this.uiThemeMode = uiThemeMode;
         this.uiMode = uiMode;
         this.smallestScreenWidthDp = smallestScreenWidthDp;
         this.screenWidthDp = screenWidthDp;
@@ -202,6 +210,14 @@ public class ResConfigFlags {
                 break;
             case ORIENTATION_SQUARE:
                 ret.append("-square");
+                break;
+        }
+        switch (uiThemeMode) {
+            case UI_THEME_MODE_HOLO_DARK:
+                ret.append("-holodark");
+                break;
+            case UI_THEME_MODE_HOLO_LIGHT:
+                ret.append("-hololight");
                 break;
         }
         switch (uiMode & MASK_UI_MODE_TYPE) {
@@ -345,7 +361,8 @@ public class ResConfigFlags {
                 || screenHeightDp != 0) {
             return SDK_HONEYCOMB_MR2;
         }
-        if ((uiMode & (MASK_UI_MODE_TYPE | MASK_UI_MODE_NIGHT)) != UI_MODE_NIGHT_ANY) {
+        if ((uiMode & (MASK_UI_MODE_TYPE | MASK_UI_MODE_NIGHT)) != 0
+                || uiThemeMode != 0) {
             return SDK_FROYO;
         }
         if ((screenLayout & (MASK_SCREENSIZE | MASK_SCREENLONG)) != SCREENSIZE_ANY
@@ -465,6 +482,11 @@ public class ResConfigFlags {
     public final static byte SCREENLONG_ANY = 0x00;
     public final static byte SCREENLONG_NO = 0x10;
     public final static byte SCREENLONG_YES = 0x20;
+
+    public final static byte UI_THEME_MODE_UNDEFINED = 0;
+    public final static byte UI_THEME_MODE_NORMAL = 1;
+    public final static byte UI_THEME_MODE_HOLO_DARK = 2;
+    public final static byte UI_THEME_MODE_HOLO_LIGHT = 3;
 
     public final static byte MASK_UI_MODE_TYPE = 0x0f;
     public final static byte UI_MODE_TYPE_ANY = 0x00;
