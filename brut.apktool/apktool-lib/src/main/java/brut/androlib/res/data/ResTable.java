@@ -41,7 +41,6 @@ public class ResTable {
 
     private Map<String, String> mSdkInfo = new LinkedHashMap<String, String>();
     private Map<String, String> mVersionInfo = new LinkedHashMap<String, String>();
-    private Map<String, String> mUnknownFiles = new LinkedHashMap<String, String>();
 
     public ResTable() {
         mAndRes = null;
@@ -89,6 +88,16 @@ public class ResTable {
         }
         // if id is still 0, we only have one pkgId which is "android" -> 1
         return (id == 0) ? getPackage(1) : getPackage(id);
+    }
+
+    public ResPackage getCurrentResPackage() throws AndrolibException {
+        ResPackage pkg = mPackagesById.get(mPackageId);
+
+        if (pkg != null) {
+            return pkg;
+        } else {
+            return getHighestSpecPackage();
+        }
     }
 
     public ResPackage getPackage(String name) throws AndrolibException {
@@ -166,10 +175,6 @@ public class ResTable {
         mVersionInfo.put(key, value);
     }
 
-    public void addUnknownFileInfo(String file, String value) {
-        mUnknownFiles.put(file,value);
-    }
-
     public Map<String, String> getVersionInfo() {
         return mVersionInfo;
     }
@@ -180,10 +185,6 @@ public class ResTable {
 
     public boolean getAnalysisMode() {
         return mAnalysisMode;
-    }
-
-    public Map<String, String> getUnknownFiles() {
-        return mUnknownFiles;
     }
 
     public String getPackageRenamed() {
