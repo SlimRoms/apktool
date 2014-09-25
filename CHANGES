@@ -37,11 +37,20 @@ v2.0.0 (TBA)
 -Fixed (issue #603) - Fixed unknown files prefixed with common name from being ignored.
 -Fixed (issue #606) - Fixed unknown files being ignored when -r is used.
 -Fixed (issue #609) - Fixed handling renamed manifests with ("android", "com.htc" and "miui").
+-Fixed (issue #626) - Fixed handling strange characters with unknown files.
+-Fixed (issue #630) - Fixed handling renamed manifests with ("com.lge")
+-Fixed (issue #409) - Fixed array items incorrectly typed.
+-Fixed (issue #512) - Fixed AndroidManifest missing attributes.
+-Fixed (issue #677) - Fixed ignoring formatted attribute in <string-array>.
+-Fixed (issue #675) - Fixed multiple overlapping catches.
+-Fixed issue with APKs with multiple dex files.
+-Fixed issue with using Apktool without smali/baksmali for ApktoolProperties (Thanks teprrr)
 -Fixed issue with non-URI standard characters in apk name (Thanks rover12421)
 -Added output to list Apktool version to help debugging.
 -Updated known bytes for configurations to 38 (from addition of layout direction)
 -Fixed NPE when handling odex apks even with --no-src specified. (Thanks Rodrigo Chiossi)
 -Fixed locale problems when locale changes meaning of default letters in windows .bat script (Thanks Adem666)
+-Fixed problem when -r was used with no /res folder present in apk (Thanks chrisch1974)
 
 v1.5.2 (Released February 2 - 2013) Codename: Bug Fixes
 -Fixed (issue #299) - output smali filename errors to screen during rebuild instead of filestream
